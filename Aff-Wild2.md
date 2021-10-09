@@ -98,13 +98,29 @@ use the Cosine Annealing as the learning rate scheduler with the starting learni
 
 ### 4. **Action Unit Detection with Joint Adaptive Attention and Graph Relation**
 
-JAA Model：特征提取器。
+JAA Model：特征提取器。层次和多尺度区域学习，面部对齐，全局特征学习和自适应注意力学习。
 
-分层和多尺度区域学习：不同局部面部区域的 AU 具有不同的结构和纹理信息，不同的局部区域应使用不同的过滤器进行处理。包括一个普通卷积层和三个分层分区域的卷积层。
+<img src="Image/image-20211009150545672.png" alt="image-20211009150545672"  />
+
+
+
+分层和多尺度区域学习：不同局部面部区域的 AU 具有不同的结构和纹理信息，不同的局部区域应使用不同的滤波进行处理。包括一个普通卷积层和三个分层分区域的卷积层。后三个卷积层是均匀划分的8x8,4x4,2x2patches分别对前一层相应patches进行卷积的结果。通过连接后三个卷积层的输出，提取与第一个卷积层相同通道数的层次特征和多尺度特征。
+
+<img src="Image/image-20211009150803076.png" alt="image-20211009150803076"  />
 
 面部对齐模型：使用Dlib检测面部区域关键点作为标签。输出面部对齐特征，包括全局的面部形状信息和局部的关键点信息。
 
-自适应注意力学习：
+![image-20211009153517586](Image/image-20211009153517586.png)
+
+全局特征学习模块：用于捕获全局面部结构和纹理信息，其结构与面部对齐模块相同。 它的输出全局特征和人脸对齐特征都用于最终的 AU 检测，可以在局部 AU 特征之上提供互补的有用信息。
+
+自适应注意力学习：第一步是分别在分支中优化一个AU的attention map（AU attention refinement），第二步是学习和提取局部AU特征（local AU feature learning）。模型输出是每个AU的局部特征$f_i$。
+
+GCN：每个AU的特征$f_i$作为节点。邻接矩阵$M$根据AU间的条件概率决定。设定阈值将矩阵转化为0-1矩阵。
+
+![image-20211009154337880](Image/image-20211009154337880.png)
+
+
 
 ### 5. **A Multi-task Mean Teacher for Semi-supervised Facial Affective Behavior Analysis**
 
